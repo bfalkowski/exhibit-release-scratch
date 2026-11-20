@@ -47,7 +47,7 @@ jobs:
 
       # Shadow mode: the step succeeds whatever the verdict. enforce: true is the person's decision.
       # 6f6de5a is main after #220, the PR that added the Action.
-      - uses: bfalkowski/exhibit@6f6de5ae57f34a3e82d531f93dbe908ab49c6991
+      - uses: bfalkowski/exhibit-release-scratch@v0.1.0
         with:
           command: check
           enforce: false
@@ -75,7 +75,7 @@ jobs:
           path: .exhibit
 
       # The same commit of Exhibit as the check job, and the same enforce.
-      - uses: bfalkowski/exhibit@6f6de5ae57f34a3e82d531f93dbe908ab49c6991
+      - uses: bfalkowski/exhibit-release-scratch@v0.1.0
         with:
           command: publish
           comment: true
