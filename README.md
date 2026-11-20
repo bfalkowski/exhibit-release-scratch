@@ -1,3 +1,5 @@
+> A scratch repo for real runs of Exhibit's release workflow (ticket 193), used for nothing else.
+
 # Exhibit
 
 Every pull request brings its own evidence. Exhibit decides what evidence a PR needs, checks that the evidence is strong, and learns from each bug that gets through.
