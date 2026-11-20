@@ -1,0 +1,74 @@
+{
+  "exhibit_version": "0.1.0",
+  "policy": {
+    "path": "evidence.yml",
+    "sha256": "f69c1b452930c5cc6454f99a03c8a0c226b763ecb3f0aca13d692286e8c1f5bc"
+  },
+  "repo": "bfalkowski/exhibit-release-scratch",
+  "pr": 1,
+  "base": "f81deead2310bff13824818e7b07ec5f602b49ea",
+  "head": "d544f2a75e9e17e3b1748113794f7d160c2dc193",
+  "classification": {
+    "kinds": [
+      "tooling"
+    ],
+    "risk": "medium",
+    "fix": false,
+    "fix_signal": null,
+    "feature": false,
+    "merge_without_reading": "never",
+    "used_default": false,
+    "policy_changed": false,
+    "signals_from": "pr"
+  },
+  "requirements": [
+    {
+      "type": "tests-before-after",
+      "params": {},
+      "kinds": [
+        "tooling"
+      ],
+      "status": "failed",
+      "details": {
+        "base": {
+          "passed": 577,
+          "failed": 0,
+          "skipped": 0,
+          "flaky": 0
+        },
+        "head": {
+          "passed": 573,
+          "failed": 4,
+          "skipped": 0,
+          "flaky": 0
+        },
+        "failed_on_head": [
+          "test > .github/workflows/exhibit.yml: both jobs run Exhibit from a fixed commit SHA or a release tag, never a branch or ./",
+          "test > .github/workflows/exhibit.yml: the check job can only read",
+          "test > .github/workflows/exhibit.yml: the publish job writes, but never checks out or runs the PR head, and is skipped for a fork",
+          "test > the example pins the same Exhibit as Exhibit's own workflow, so a copy gets a commit that runs here"
+        ]
+      },
+      "author": "builder",
+      "duration_ms": 92640
+    }
+  ],
+  "verdict": "needs_person",
+  "gaps": [
+    {
+      "type": "tests-before-after",
+      "status": "failed",
+      "how_to_fix": "4 tests fail on the head, also when run again: test > .github/workflows/exhibit.yml: both jobs run Exhibit from a fixed commit SHA or a release tag, never a branch or ./; test > .github/workflows/exhibit.yml: the check job can only read; test > .github/workflows/exhibit.yml: the publish job writes, but never checks out or runs the PR head, and is skipped for a fork; test > the example pins the same Exhibit as Exhibit's own workflow, so a copy gets a commit that runs here. Fix the change so that they pass, and run exhibit check again."
+    }
+  ],
+  "checks_by_author": {
+    "builder": 1,
+    "hidden": 0
+  },
+  "flaky_tests": [],
+  "environment": {
+    "node": "20.x",
+    "os": "linux"
+  },
+  "created_at": "2026-11-20T20:05:54.081Z"
+}
