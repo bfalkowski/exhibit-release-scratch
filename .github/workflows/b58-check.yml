@@ -1,5 +1,5 @@
 # A real run for Exhibit ticket 193: the Building58 setup note's policy, on a GitHub runner.
-# It runs exhibit check on Building58 PR 147 with examples/building58/evidence.yml, the way the
+# It runs exhibit check on Building58 PRs 147 and 111 (a fix) with examples/building58/evidence.yml, the way the
 # setup note's check job would, and prints how long it took.
 name: Building58 policy run
 on:
@@ -10,7 +10,11 @@ permissions:
 jobs:
   check:
     runs-on: ubuntu-24.04
-    timeout-minutes: 240
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        pr: [147, 111]
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,15 +31,16 @@ jobs:
           node-version: lts/*
       - run: npm ci --omit=dev --ignore-scripts --no-audit --no-fund
         working-directory: exhibit
-      - name: exhibit check on Building58 PR 147
+      - name: exhibit check on Building58 PR ${{ matrix.pr }}
         working-directory: b58
         env:
           GITHUB_TOKEN: ${{ github.token }}
+          PR: ${{ matrix.pr }}
         run: |
           cp ../exhibit/examples/building58/evidence.yml .
           node --version
           start=$(date +%s)
-          node ../exhibit/bin/exhibit.js check --pr 147 --repo bfalkowski/Building58 --shadow
+          node ../exhibit/bin/exhibit.js check --pr "$PR" --repo bfalkowski/Building58 --shadow
           echo "exhibit check took $(( ($(date +%s) - start) / 60 )) minutes"
           cat .exhibit/summary.md
           node -e "const e=require('./.exhibit/evidence.json');for(const r of e.requirements)console.log(r.type,r.status,JSON.stringify(r.details?.head??'').slice(0,300))"

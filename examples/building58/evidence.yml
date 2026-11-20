@@ -5,11 +5,17 @@
 version: 3
 
 settings:
-  # All of relay/test/*.test.js as JUnit, one file at a time. relay/test/run.js writes no JUnit, so
-  # this uses node --test. Each run gets its own empty HOME, as run.js gives each file, so a test
-  # never reads a room's files under ~/.office-world. --ignore-scripts skips "prepare", which only
-  # sets git hooks. The browser tests in relay/test/browser/ are not in it.
-  test_command: "npm ci --ignore-scripts --no-audit --no-fund && HOME=\"$(mktemp -d)\" node --test --test-concurrency=1 --test-timeout=120000 --test-reporter=junit --test-reporter-destination=.exhibit/junit.xml relay/test/*.test.js"
+  # All of relay/test/*.test.js as JUnit, six files at a time, as relay/test/run.js runs them.
+  # run.js writes no JUnit, so this does what it does with node --test: each file gets a new empty
+  # HOME of its own, so no test reads a room's files under ~/.office-world or another file's, and
+  # writes its own JUnit file. Then the files are joined into one. --ignore-scripts skips
+  # "prepare", which only sets git hooks. The browser tests in relay/test/browser/ are not in it.
+  test_command: >-
+    npm ci --ignore-scripts --no-audit --no-fund &&
+    mkdir -p .exhibit/junit &&
+    { ls relay/test/*.test.js | xargs -P 6 -n 1 sh -c 'HOME="$(mktemp -d)" node --test --test-timeout=120000 --test-reporter=junit --test-reporter-destination=".exhibit/junit/${1##*/}.xml" "$1" > /dev/null 2>&1' sh; code=$?;
+    { echo '<?xml version="1.0" encoding="utf-8"?>'; echo '<testsuites>'; sed -e '/^<?xml/d' -e '/^<\/*testsuites>$/d' .exhibit/junit/*.xml; echo '</testsuites>'; } > .exhibit/junit.xml;
+    exit $code; }
   test_results: .exhibit/junit.xml
   # Titles start with a ticket key, such as "T-401: ...", so title_after_key skips it (spec 9.1).
   fix_signals: [label:bug, title_after_key:fix, branch:fix/]
